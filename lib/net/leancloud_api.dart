@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:hao12345/bean/all_urls_bean.dart';
 import 'package:retrofit/http.dart';
 
-import 'bean/all_urls_bean.dart';
 import 'network_helper.dart';
 
 part 'leancloud_api.g.dart';
