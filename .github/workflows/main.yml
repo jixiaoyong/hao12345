@@ -2,7 +2,7 @@ name: Flutter Web CI
 
 on:
   push:
-    branches: [ web ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
