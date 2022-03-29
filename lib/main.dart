@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'bean/local_setting_config.dart';
-import 'component/my_home_page.dart';
+import 'component/hao123_page.dart';
 import 'utils/local_storage.dart';
 import 'utils/some_keys.dart';
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
+      home: Hao123Page(
         localSettingConfig: localConfig,
       ),
     );

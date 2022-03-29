@@ -15,19 +15,19 @@ import '../net/network_helper.dart';
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/28
 /// description: todo
-class MyHomePage extends StatefulWidget {
+class Hao123Page extends StatefulWidget {
   LocalSettingConfig localSettingConfig;
 
-  MyHomePage({
+  Hao123Page({
     Key? key,
     required this.localSettingConfig,
   }) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Hao123Page> createState() => _Hao123PageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _Hao123PageState extends State<Hao123Page> {
   AllUrlsBean? allUrlsBean;
 
   // for webview
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    var isSmallWidthScreen = kIsWeb && screenWidth < 400;
+    var isSmallWidthScreen = kIsWeb && screenWidth <= 400;
     var inputMethodPadding = screenWidth / 20;
     if (isSmallWidthScreen) {
       inputMethodPadding = 0;
@@ -158,7 +158,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 // navigation website urls
-                allUrlsBean == null ? loadingBody() : loadedBody(allUrlsBean!)
+                allUrlsBean == null
+                    ? loadingBody()
+                    : loadedBody(allUrlsBean!, isSmallWidthScreen)
               ],
             ),
           ),
@@ -204,12 +206,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  loadedBody(AllUrlsBean allUrlsBean) {
+  loadedBody(AllUrlsBean allUrlsBean, bool isSmallWidthScreen) {
     if (allUrlsBean.results?.isNotEmpty == true) {
       var data = allUrlsBean.results!;
       return Wrap(
-        spacing: kIsWeb ? 20 : 5,
-        runSpacing: kIsWeb ? 20.0 : 2.0,
+        spacing: isSmallWidthScreen ? 5 : 20,
+        runSpacing: isSmallWidthScreen ? 2.0 : 20.0,
         alignment: WrapAlignment.center,
         clipBehavior: Clip.hardEdge,
         children: data.map((item) {
@@ -251,7 +253,10 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         children: const [
           CircularProgressIndicator(),
-          Text("loading..."),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text("loading..."),
+          ),
         ],
       ),
     );
