@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     var localConfig = LocalSettingConfig.fromJsonStrOrNull(localConfigStr);
 
     return MaterialApp(
+      title: "常用网址导航",
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

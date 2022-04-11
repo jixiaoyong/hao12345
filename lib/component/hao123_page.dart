@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hao12345/bean/local_setting_config.dart';
 import 'package:hao12345/bean/search_engine.dart';
+import 'package:hao12345/utils/color_extension.dart';
 import 'package:hao12345/utils/local_storage.dart';
 import 'package:hao12345/utils/some_keys.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,6 +35,9 @@ class _Hao123PageState extends State<Hao123Page> {
   Results? _onHoverItem;
 
   late TextEditingController _textController;
+
+  var colorLabelUnselected = "#ff646464".hexToColor;
+  var colorLabelSelected = Colors.white;
 
   @override
   initState() {
@@ -82,10 +86,15 @@ class _Hao123PageState extends State<Hao123Page> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 //icon
-                Image.network(
-                  "https://avatars.githubusercontent.com/u/18367427?v=4",
-                  height: iconSize,
-                  width: iconSize,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(iconSize),
+                  child: Image.network(
+                    widget.localSettingConfig.searchIcon ??
+                        LocalSettingConfig.DEF_ICON,
+                    height: iconSize,
+                    width: iconSize,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 // search box
                 Padding(
@@ -168,6 +177,8 @@ class _Hao123PageState extends State<Hao123Page> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          var searchIcon = widget.localSettingConfig.searchIcon;
+
           showDialog(
               context: context,
               builder: (context) {
@@ -178,6 +189,7 @@ class _Hao123PageState extends State<Hao123Page> {
                     title: const Text('设置'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("文字大小:$fontSize"),
                         Slider(
@@ -193,7 +205,46 @@ class _Hao123PageState extends State<Hao123Page> {
                           divisions: 10,
                           min: 10,
                           max: 20,
-                          label: "${fontSize}",
+                          label: "$fontSize",
+                        ),
+                        const Text("搜索头像"),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                decoration: const InputDecoration(
+                                  hintText: "请输入头像地址",
+                                ),
+                                onChanged: (value) {
+                                  searchIcon = value;
+                                  innerState(() {});
+                                  print("输入头像地址 $searchIcon");
+                                },
+                                maxLines: 1,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.check),
+                              iconSize: 20,
+                              onPressed: () {
+                                innerState(() {});
+                                if (searchIcon == null ||
+                                    searchIcon?.isEmpty == true) {
+                                  return;
+                                }
+                                print("searchIcon输入头像地址 $searchIcon");
+
+                                setState(() {
+                                  widget.localSettingConfig.searchIcon =
+                                      searchIcon;
+                                });
+                                LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
+                                    json.encode(widget.localSettingConfig));
+
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
                         ),
                       ],
                     ),
@@ -201,7 +252,7 @@ class _Hao123PageState extends State<Hao123Page> {
                 });
               });
         },
-        child: Icon(Icons.settings),
+        child: const Icon(Icons.settings),
       ),
     );
   }
@@ -232,7 +283,9 @@ class _Hao123PageState extends State<Hao123Page> {
                 label: Text(
                   item.name ?? "",
                   style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected
+                          ? colorLabelSelected
+                          : colorLabelUnselected,
                       fontSize: widget.localSettingConfig.fontSize ?? 15),
                 ),
                 backgroundColor: isSelected ? Colors.blue : Colors.grey[100],
