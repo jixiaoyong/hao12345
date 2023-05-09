@@ -2,20 +2,26 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hao12345/bean/local_setting_config.dart';
 import 'package:hao12345/bean/search_engine.dart';
-import 'package:hao12345/utils/color_extension.dart';
+import 'package:hao12345/component/settings_dialog.dart';
 import 'package:hao12345/utils/local_storage.dart';
 import 'package:hao12345/utils/some_keys.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../bean/all_urls_bean.dart';
 import '../net/network_helper.dart';
+import '../theme/theme.dart';
+import '../theme/theme_manager.dart';
+import '../utils/logger.dart';
+import 'loaded_body.dart';
+import 'loading_body_widget.dart';
 
 /// author: jixiaoyong
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/28
-/// description: todo
+/// description: hao123主页
 class Hao123Page extends StatefulWidget {
   LocalSettingConfig localSettingConfig;
 
@@ -28,22 +34,35 @@ class Hao123Page extends StatefulWidget {
   State<Hao123Page> createState() => _Hao123PageState();
 }
 
-class _Hao123PageState extends State<Hao123Page> {
+class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
   AllUrlsBean? allUrlsBean;
 
-  // for webview
-  Results? _onHoverItem;
-
   late TextEditingController _textController;
-
-  var colorLabelUnselected = "#ff646464".hexToColor;
-  var colorLabelSelected = Colors.white;
 
   @override
   initState() {
     super.initState();
     _textController = TextEditingController();
     init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _toggleTheme();
+    });
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  void _toggleTheme() {
+    setState(() {
+      // 优先读取本地的主题设置
+      var isDarkModel = widget.localSettingConfig.isDarkTheme ??
+          SchedulerBinding.instance.window.platformBrightness ==
+              Brightness.dark;
+
+      if (isDarkModel) {
+        ThemeManager.instance.setTheme(kDarkTheme);
+      } else {
+        ThemeManager.instance.setTheme(kLightTheme);
+      }
+    });
   }
 
   void init() {
@@ -52,7 +71,7 @@ class _Hao123PageState extends State<Hao123Page> {
         allUrlsBean = value;
       });
     }).onError((error, stackTrace) {
-      print(error);
+      Logger.d(error);
     });
   }
 
@@ -70,10 +89,10 @@ class _Hao123PageState extends State<Hao123Page> {
       iconSize = 80;
     }
 
-    debugPrint(
-        "screenWidth: $screenWidth,isSmallWidthScreen: $isSmallWidthScreen,inputMethodPadding: $inputMethodPadding");
+    var themeData = ThemeManager.instance.themeData;
 
     return Scaffold(
+      backgroundColor: themeData.backgroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -168,8 +187,12 @@ class _Hao123PageState extends State<Hao123Page> {
                 ),
                 // navigation website urls
                 allUrlsBean == null
-                    ? loadingBody()
-                    : loadedBody(allUrlsBean!, isSmallWidthScreen)
+                    ? const LoadingBodyWidget()
+                    : LoadedBody(
+                        allUrlsBean: allUrlsBean!,
+                        isSmallWidthScreen: isSmallWidthScreen,
+                        themeData: themeData,
+                        fontSize: widget.localSettingConfig.fontSize)
               ],
             ),
           ),
@@ -182,74 +205,37 @@ class _Hao123PageState extends State<Hao123Page> {
           showDialog(
               context: context,
               builder: (context) {
-                return StatefulBuilder(builder: (context, innerState) {
-                  var fontSize = widget.localSettingConfig.fontSize!;
+                var fontSize = widget.localSettingConfig.fontSize!;
+                var curTheme = ThemeManager.instance.themeData;
+                var isDarkTheme = Brightness.dark == curTheme.brightness;
+                return SettingsDialog(
+                    fontSize: fontSize,
+                    searchIcon: searchIcon,
+                    isDarkTheme: isDarkTheme,
+                    updateFontSize: (fontSize) {
+                      setState(() {
+                        widget.localSettingConfig.fontSize = fontSize;
+                      });
+                      LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
+                          json.encode(widget.localSettingConfig));
+                    },
+                    updateSearchIcon: (searchIcon) {
+                      Logger.d("searchIcon输入头像地址 $searchIcon");
 
-                  return AlertDialog(
-                    title: const Text('设置'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("文字大小:$fontSize"),
-                        Slider(
-                          value: fontSize,
-                          onChanged: (value) {
-                            innerState(() {});
-                            setState(() {
-                              widget.localSettingConfig.fontSize = value;
-                            });
-                            LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
-                                json.encode(widget.localSettingConfig));
-                          },
-                          divisions: 10,
-                          min: 10,
-                          max: 20,
-                          label: "$fontSize",
-                        ),
-                        const Text("搜索头像"),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  hintText: "请输入头像地址",
-                                ),
-                                onChanged: (value) {
-                                  searchIcon = value;
-                                  innerState(() {});
-                                  print("输入头像地址 $searchIcon");
-                                },
-                                maxLines: 1,
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.check),
-                              iconSize: 20,
-                              onPressed: () {
-                                innerState(() {});
-                                if (searchIcon == null ||
-                                    searchIcon?.isEmpty == true) {
-                                  return;
-                                }
-                                print("searchIcon输入头像地址 $searchIcon");
+                      setState(() {
+                        widget.localSettingConfig.searchIcon = searchIcon;
+                      });
+                      LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
+                          json.encode(widget.localSettingConfig));
 
-                                setState(() {
-                                  widget.localSettingConfig.searchIcon =
-                                      searchIcon;
-                                });
-                                LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
-                                    json.encode(widget.localSettingConfig));
-
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                });
+                      Navigator.of(context).pop();
+                    },
+                    updateDarkModel: (isDarkModel) {
+                      widget.localSettingConfig.isDarkTheme = isDarkModel;
+                      LocalStorage.setItem(SomeKeys.SETTING_CONFIG,
+                          json.encode(widget.localSettingConfig));
+                      _toggleTheme();
+                    });
               });
         },
         child: const Icon(Icons.settings),
@@ -257,61 +243,14 @@ class _Hao123PageState extends State<Hao123Page> {
     );
   }
 
-  loadedBody(AllUrlsBean allUrlsBean, bool isSmallWidthScreen) {
-    if (allUrlsBean.results?.isNotEmpty == true) {
-      var data = allUrlsBean.results!;
-      return Wrap(
-        spacing: isSmallWidthScreen ? 5 : 20,
-        runSpacing: isSmallWidthScreen ? 2.0 : 20.0,
-        alignment: WrapAlignment.center,
-        clipBehavior: Clip.hardEdge,
-        children: data.map((item) {
-          var isSelected = _onHoverItem == item;
-          return GestureDetector(
-            onTap: () {
-              launch(
-                item.url!,
-              );
-            },
-            child: MouseRegion(
-              onHover: (event) {
-                setState(() {
-                  _onHoverItem = item;
-                });
-              },
-              child: Chip(
-                label: Text(
-                  item.name ?? "",
-                  style: TextStyle(
-                      color: isSelected
-                          ? colorLabelSelected
-                          : colorLabelUnselected,
-                      fontSize: widget.localSettingConfig.fontSize ?? 15),
-                ),
-                backgroundColor: isSelected ? Colors.blue : Colors.grey[100],
-              ),
-            ),
-          );
-        }).toList(),
-      );
-    } else {
-      const Center(
-        child: Text("Nothing here,try again later"),
-      );
-    }
+  @override
+  void didChangePlatformBrightness() {
+    _toggleTheme();
   }
 
-  loadingBody() {
-    return Center(
-      child: Column(
-        children: const [
-          CircularProgressIndicator(),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("loading..."),
-          ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }

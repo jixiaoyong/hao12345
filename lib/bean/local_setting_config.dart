@@ -14,12 +14,14 @@ class LocalSettingConfig {
     this.fontSize,
     this.searchEngine,
     this.searchIcon,
+    this.isDarkTheme,
   });
 
   LocalSettingConfig.DEAFULT() {
     fontSize = 15.0;
     searchEngine = SearchEngine.Google;
     searchIcon = DEF_ICON;
+    isDarkTheme = null; // 默认和系统保持一致
   }
 
   factory LocalSettingConfig.fromJsonStrOrNull(String? jsonStr) {
@@ -40,21 +42,25 @@ class LocalSettingConfig {
     fontSize = json['fontSize'] ?? 15;
     searchEngine = SearchEngine.values[json['searchEngine'] ?? 0];
     searchIcon = json['searchIcon'];
+    isDarkTheme = json['isDarkTheme'];
   }
 
   double? fontSize;
   SearchEngine? searchEngine;
   String? searchIcon;
+  bool? isDarkTheme;
 
   LocalSettingConfig copyWith({
     double? fontSize,
     SearchEngine? searchEngine,
     String? searchIcon,
+    bool? isDarkTheme,
   }) =>
       LocalSettingConfig(
         fontSize: fontSize ?? this.fontSize,
         searchEngine: searchEngine ?? this.searchEngine,
         searchIcon: searchIcon ?? this.searchIcon,
+        isDarkTheme: isDarkTheme ?? this.isDarkTheme,
       );
 
   Map<String, dynamic> toJson() {
@@ -62,6 +68,7 @@ class LocalSettingConfig {
     map['fontSize'] = fontSize;
     map['searchEngine'] = searchEngine?.index;
     map['searchIcon'] = searchIcon;
+    map['isDarkTheme'] = isDarkTheme;
     return map;
   }
 }

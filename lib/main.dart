@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'bean/local_setting_config.dart';
@@ -20,9 +19,6 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: "常用网址导航",
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: Hao123Page(
         localSettingConfig: localConfig,
       ),
