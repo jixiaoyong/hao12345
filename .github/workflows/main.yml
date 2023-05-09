@@ -2,49 +2,37 @@ name: Flutter Web CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      my_secret: ${{secrets.GH_DEPLOY}}
+  deploy:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: subosito/flutter-action@v1
-      with:
-        channel: beta
-    - run: flutter config --enable-web
-    - run: flutter pub get
-#     - run: flutter test
-    - run: flutter build web
-    - name: Archive Production Artifact
-      uses: actions/upload-artifact@master
-      with:
-        name: web-build
-        path: build/web
-    - name: Download Artifact
-      uses: actions/download-artifact@master
-      with:
-        name: web-build 
-    - name: Display structure of build files
-      run: ls -R
-      working-directory: ./web
-    - name: Deploy to GH Pages
-      run: |
-        cd build/web
-        git init
-        # type configurations: your user.email and user.name followed lines 
-        # git config --global user.email your_email 
-        # git config --global user.name your_name 
-        git config --global user.email jixiaoyong1995@gmail.com
-        git config --global user.name jixiaoyong
-        git status
-        # change this remote url for example your remote url is https://github.com/onatcipli/flutter_web.git then the following:
-        git remote add origin https://${{secrets.GH_DEPLOY}}@github.com/jixiaoyong/hao12345.git
-        git checkout -b web
-        git add --all
-        git commit -m "update web page"
-        git push origin web -f
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        run: |
+          git clone https://github.com/flutter/flutter.git --depth 1 -b beta _flutter
+          echo "${GITHUB_WORKSPACE}/_flutter/bin" >> ${GITHUB_PATH}
+
+      - name: Install
+        run: |
+          flutter config --enable-web
+          flutter pub get
+
+      - name: Build
+        run: flutter build web
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          publish_branch: web  # default: gh-pages
