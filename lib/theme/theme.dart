@@ -17,8 +17,8 @@ final ThemeData kLightTheme = ThemeData(
 final ThemeData kDarkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Colors.grey,
-  hoverColor: Colors.white60,
+  hoverColor: Colors.black38,
   backgroundColor: const Color(0xff201F21),
   hintColor: const Color(0xff303031),
-  highlightColor: Colors.white,
+  highlightColor: Colors.black,
 );

@@ -138,9 +138,9 @@ class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
                                       horizontal: isSmallWidthScreen ? 10 : 20),
                                   child: TextField(
                                     controller: _textController,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                    ),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: themeData.primaryColor),
                                     decoration: const InputDecoration(
                                         border: InputBorder.none),
                                     onSubmitted: (String value) {
@@ -164,6 +164,8 @@ class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
                                         }).toList(),
                                         value: widget
                                             .localSettingConfig.searchEngine,
+                                        style: TextStyle(
+                                            color: themeData.primaryColor),
                                         onChanged: (e) {
                                           setState(() {
                                             widget.localSettingConfig
@@ -209,6 +211,7 @@ class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
                 var curTheme = ThemeManager.instance.themeData;
                 var isDarkTheme = Brightness.dark == curTheme.brightness;
                 return SettingsDialog(
+                    backgroundColor: themeData.backgroundColor,
                     fontSize: fontSize,
                     searchIcon: searchIcon,
                     isDarkTheme: isDarkTheme,
