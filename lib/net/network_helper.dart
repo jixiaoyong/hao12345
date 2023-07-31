@@ -7,9 +7,9 @@ import 'leancloud_info.dart';
 /// author: jixiaoyong
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/20
-/// description: todo
+/// description: 网络工具类
 class NetworkHelper {
-  static const String BASE_URL = "https://api.xiaoyong.ml/1.1/";
+  static const String BASE_URL = "https://api.android666.cf/1.1/";
 
   static late NetworkHelper INSTANCE = NetworkHelper._();
 

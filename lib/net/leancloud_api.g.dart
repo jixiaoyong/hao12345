@@ -10,7 +10,7 @@ part of 'leancloud_api.dart';
 
 class _LeanCloudApi implements LeanCloudApi {
   _LeanCloudApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://api.xiaoyong.ml/1.1/';
+    baseUrl ??= 'https://api.android666.cf/1.1/';
   }
 
   final Dio _dio;

@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 /// author: jixiaoyong
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/20
-/// description: todo
+/// description: leancloud 信息
 class LeanCloudInfo {
   static const String appId = "eiCorogUwe1OdpPG65oSWEsP-MdYXbMMI";
   static const String appKey = "glorq3CiX4j8RNIWf7kq5LBW";
