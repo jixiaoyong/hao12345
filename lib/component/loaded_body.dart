@@ -53,17 +53,20 @@ class _LoadedBodyState extends State<LoadedBody> {
                 });
               },
               child: Chip(
-                label: Text(
-                  item.name ?? "",
-                  style: TextStyle(
-                      color: isSelected
-                          ? widget.themeData.highlightColor
-                          : widget.themeData.hintColor,
-                      fontSize: widget.fontSize ?? 15),
-                ),
-                backgroundColor:
-                    isSelected ? widget.themeData.hoverColor : Colors.grey[100],
-              ),
+                  label: Text(
+                    item.name ?? "",
+                    style: TextStyle(
+                        color: isSelected
+                            ? widget.themeData.highlightColor
+                            : widget.themeData.hintColor,
+                        fontSize: widget.fontSize ?? 15),
+                  ),
+                  backgroundColor: isSelected
+                      ? widget.themeData.hoverColor
+                      : Colors.grey[100],
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20))),
             ),
           );
         }).toList(),

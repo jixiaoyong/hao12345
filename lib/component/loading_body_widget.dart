@@ -11,9 +11,9 @@ class LoadingBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
-        children: const [
+        children: [
           CircularProgressIndicator(),
           Padding(
             padding: EdgeInsets.all(8.0),
