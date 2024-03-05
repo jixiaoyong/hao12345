@@ -10,7 +10,7 @@ part 'leancloud_api.g.dart';
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/20
 /// description:
-/// flutter pub run build_runner build
+/// flutter pub run build_runner build --delete-conflicting-outputs
 ///
 @RestApi(baseUrl: NetworkHelper.BASE_URL)
 abstract class LeanCloudApi {

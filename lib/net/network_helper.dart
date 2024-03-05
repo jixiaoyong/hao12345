@@ -9,7 +9,7 @@ import 'leancloud_info.dart';
 /// date: 2022/3/20
 /// description: 网络工具类
 class NetworkHelper {
-  static const String BASE_URL = "https://api.android666.cf/1.1/";
+  static const String BASE_URL = "https://api.apphub.prvcy.page/1.1/";
 
   static late NetworkHelper INSTANCE = NetworkHelper._();
 
