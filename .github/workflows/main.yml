@@ -16,18 +16,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Flutter
-        run: |
-          git clone https://github.com/flutter/flutter.git --depth 1 -b beta _flutter
-          echo "${GITHUB_WORKSPACE}/_flutter/bin" >> ${GITHUB_PATH}
+      # -----------------------------------------------------------------
+      # 使用 subosito/flutter-action 锁定版本 3.35.7
+      # -----------------------------------------------------------------
+      - name: Setup Flutter (Version 3.35.7)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.7"
 
-      - name: Install
+      - name: Install Dependencies
         run: |
+          # 确保 web 启用
           flutter config --enable-web
           flutter pub get
 
-      - name: Build
-        run: flutter build web
+      - name: Build Web
+        run: flutter build web --base-href /hao12345/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
