@@ -16,15 +16,14 @@ class SettingsDialog extends StatefulWidget {
   final ValueChanged<bool> updateDarkModel;
 
   const SettingsDialog(
-      {Key? key,
+      {super.key,
       required this.backgroundColor,
       required this.searchIcon,
       required this.fontSize,
       required this.updateFontSize,
       required this.updateSearchIcon,
       required this.updateDarkModel,
-      required this.isDarkTheme})
-      : super(key: key);
+      required this.isDarkTheme});
 
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
@@ -147,8 +146,7 @@ class SettingsItem extends StatelessWidget {
   final String title;
   final Widget child;
 
-  const SettingsItem({Key? key, required this.title, required this.child})
-      : super(key: key);
+  const SettingsItem({super.key, required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {

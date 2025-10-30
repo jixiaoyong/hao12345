@@ -25,16 +25,15 @@ class LocalSettingConfig {
   }
 
   factory LocalSettingConfig.fromJsonStrOrNull(String? jsonStr) {
-    var jsonMap;
+    if (jsonStr == null || jsonStr.isEmpty) {
+      return LocalSettingConfig.DEAFULT();
+    }
     try {
-      jsonMap = json.decode(jsonStr!);
+      final jsonMap = json.decode(jsonStr);
+      return LocalSettingConfig.fromJson(jsonMap);
     } catch (e) {
       debugPrint(e.toString());
-    }
-    if (jsonMap == null) {
       return LocalSettingConfig.DEAFULT();
-    } else {
-      return LocalSettingConfig.fromJson(jsonMap);
     }
   }
 

@@ -14,12 +14,12 @@ class LoadedBody extends StatefulWidget {
   final double? fontSize;
 
   const LoadedBody({
-    Key? key,
+    super.key,
     required this.allUrlsBean,
     required this.isSmallWidthScreen,
     required this.themeData,
     required this.fontSize,
-  }) : super(key: key);
+  });
 
   @override
   State<LoadedBody> createState() => _LoadedBodyState();
@@ -40,34 +40,61 @@ class _LoadedBodyState extends State<LoadedBody> {
         clipBehavior: Clip.hardEdge,
         children: data.map((item) {
           var isSelected = _onHoverItem == item;
+          final isDark = widget.themeData.brightness == Brightness.dark;
+          final Color textColor = isDark
+              ? Colors.black.withOpacity(0.85)
+              : widget.themeData.hintColor;
+          final Color hoverTextColor = isDark
+              ? Colors.black
+              : widget.themeData.highlightColor;
+          final Color bgColor = isDark
+              ? Colors.black.withOpacity(0.5)
+              : (Colors.grey[100]!); // 亮色模式保持之前浅灰
+          final Color hoverBgColor = isDark
+              ? Colors.white.withOpacity(0.12)
+              : widget.themeData.hoverColor;
+
+          final chip = Chip(
+              label: Text(
+                item.name ?? "",
+                style: TextStyle(
+                    color: isSelected ? hoverTextColor : textColor,
+                    fontSize: widget.fontSize ?? 15,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500),
+              ),
+              backgroundColor: isSelected ? hoverBgColor : bgColor,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: widget.themeData.dividerColor.withOpacity(0.0)),
+                  borderRadius: BorderRadius.circular(20)),
+              elevation: isSelected ? 1 : 0,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          );
+
+          final withHover = MouseRegion(
+            onHover: (event) {
+              setState(() {
+                _onHoverItem = item;
+              });
+            },
+            onExit: (_) {
+              setState(() {
+                _onHoverItem = null;
+              });
+            },
+            child: chip,
+          );
+
+          final wrapped = (item.description?.isNotEmpty == true)
+              ? Tooltip(message: item.description!, child: withHover)
+              : withHover;
+
           return GestureDetector(
             onTap: () {
               launch(
                 item.url!,
               );
             },
-            child: MouseRegion(
-              onHover: (event) {
-                setState(() {
-                  _onHoverItem = item;
-                });
-              },
-              child: Chip(
-                  label: Text(
-                    item.name ?? "",
-                    style: TextStyle(
-                        color: isSelected
-                            ? widget.themeData.highlightColor
-                            : widget.themeData.hintColor,
-                        fontSize: widget.fontSize ?? 15),
-                  ),
-                  backgroundColor: isSelected
-                      ? widget.themeData.hoverColor
-                      : Colors.grey[100],
-                  shape: RoundedRectangleBorder(
-                      side: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(20))),
-            ),
+            child: wrapped,
           );
         }).toList(),
       );
@@ -76,6 +103,5 @@ class _LoadedBodyState extends State<LoadedBody> {
         child: Text("Nothing here,try again later"),
       );
     }
-    ;
   }
 }

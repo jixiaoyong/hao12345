@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 /// @date: 2023/3/20
 class LoadingBodyWidget extends StatelessWidget {
   const LoadingBodyWidget({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

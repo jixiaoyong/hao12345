@@ -2,10 +2,14 @@
 
 class AllUrlsBean {
   AllUrlsBean({
+    this.version,
+    this.updatedAt,
     this.results,
   });
 
   AllUrlsBean.fromJson(dynamic json) {
+    version = json['version'];
+    updatedAt = json['updatedAt'];
     if (json['results'] != null) {
       results = [];
       json['results'].forEach((v) {
@@ -13,10 +17,14 @@ class AllUrlsBean {
       });
     }
   }
+  int? version;
+  String? updatedAt;
   List<Results>? results;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    if (version != null) map['version'] = version;
+    if (updatedAt != null) map['updatedAt'] = updatedAt;
     if (results != null) {
       map['results'] = results?.map((v) => v.toJson()).toList();
     }
@@ -34,6 +42,7 @@ class Results {
   Results({
     this.name,
     this.url,
+    this.description,
     this.createdAt,
     this.updatedAt,
     this.objectId,
@@ -42,12 +51,14 @@ class Results {
   Results.fromJson(dynamic json) {
     name = json['name'];
     url = json['url'];
+    description = json['description'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     objectId = json['objectId'];
   }
   String? name;
   String? url;
+  String? description;
   String? createdAt;
   String? updatedAt;
   String? objectId;
@@ -56,6 +67,7 @@ class Results {
     final map = <String, dynamic>{};
     map['name'] = name;
     map['url'] = url;
+    if (description != null) map['description'] = description;
     map['createdAt'] = createdAt;
     map['updatedAt'] = updatedAt;
     map['objectId'] = objectId;

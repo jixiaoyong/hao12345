@@ -4,7 +4,6 @@
 /// createdAt : "2015-06-29T01:39:35.931Z"
 /// updatedAt : "2015-06-29T01:39:35.931Z"
 /// objectId : "558e20cbe4b060308e3eb36c"
-
 class NavBean {
   NavBean({
     this.name,
