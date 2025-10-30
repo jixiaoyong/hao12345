@@ -13,7 +13,7 @@ class _LeanCloudApi implements LeanCloudApi {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://api.apphub.prvcy.page/1.1/';
+    baseUrl ??= 'https://api.apphub.qzz.io/1.1/';
   }
 
   final Dio _dio;

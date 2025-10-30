@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 final ThemeData kLightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.blue,
-  backgroundColor: Colors.white,
+  scaffoldBackgroundColor: Colors.white,
   hoverColor: Colors.blue,
   hintColor: Colors.grey,
   highlightColor: Colors.white,
@@ -18,7 +18,7 @@ final ThemeData kDarkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: Colors.grey,
   hoverColor: Colors.black38,
-  backgroundColor: const Color(0xff201F21),
+  scaffoldBackgroundColor: const Color(0xff201F21),
   hintColor: const Color(0xff303031),
   highlightColor: Colors.black,
 );

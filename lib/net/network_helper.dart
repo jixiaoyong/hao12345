@@ -9,7 +9,7 @@ import 'leancloud_info.dart';
 /// date: 2022/3/20
 /// description: 网络工具类
 class NetworkHelper {
-  static const String BASE_URL = "https://api.apphub.prvcy.page/1.1/";
+  static const String BASE_URL = "https://api.apphub.qzz.io/1.1/";
 
   static late NetworkHelper INSTANCE = NetworkHelper._();
 
@@ -23,7 +23,6 @@ class NetworkHelper {
         "Content-Type": "application/x-www-form-urlencoded",
         "X-LC-Id": LeanCloudInfo.appId,
         "X-LC-Key": LeanCloudInfo.appKey,
-        // "X-LC-Sign": LeanCloudInfo.getSign()
       },
     );
     _dio = Dio(dioOptions);

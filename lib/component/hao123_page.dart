@@ -92,7 +92,7 @@ class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
     var themeData = ThemeManager.instance.themeData;
 
     return Scaffold(
-      backgroundColor: themeData.backgroundColor,
+      backgroundColor: themeData.scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -211,7 +211,7 @@ class _Hao123PageState extends State<Hao123Page> with WidgetsBindingObserver {
                 var curTheme = ThemeManager.instance.themeData;
                 var isDarkTheme = Brightness.dark == curTheme.brightness;
                 return SettingsDialog(
-                    backgroundColor: themeData.backgroundColor,
+                    backgroundColor: themeData.scaffoldBackgroundColor,
                     fontSize: fontSize,
                     searchIcon: searchIcon,
                     isDarkTheme: isDarkTheme,
