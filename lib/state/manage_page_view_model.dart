@@ -186,7 +186,7 @@ class ManageViewModel extends Notifier<ManageState> {
     final statusMap = <String, ReachabilityStatus>{};
     final reasonMap = <String, String>{};
     final urlList = <String>[];
-    final keyFor = (Results e) => e.objectId ?? e.url ?? '';
+    String keyFor(Results e) => e.objectId ?? e.url ?? '';
     final urlToKey = <String, String>{};
     for (final e in items) {
       final key = keyFor(e);
@@ -337,8 +337,6 @@ class ManageViewModel extends Notifier<ManageState> {
     return encoder.convert(exportBean.toJson());
   }
 
-
   bool get hasDirtyDraft =>
       LocalStorage.getItem(SomeKeys.DRAFT_DIRTY) == 'true';
-  bool get hasRemote => false;
 }

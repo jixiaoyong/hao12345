@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hao12345/bean/all_urls_bean.dart';
+import 'package:hao12345/theme/theme_manager.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NavItemTile extends StatelessWidget {
+class NavItemTile extends ConsumerWidget {
   const NavItemTile({
     super.key,
     required this.item,
@@ -26,8 +28,8 @@ class NavItemTile extends StatelessWidget {
   final String? statusReason;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeManagerProvider);
     final host = () {
       final u = Uri.tryParse(item.url ?? '');
       return u?.host ?? '';

@@ -21,8 +21,7 @@ class NavigationViewModel extends AsyncNotifier<AllUrlsBean?> {
 
   Future<AllUrlsBean?> _safeFetch() async {
     try {
-      final data = await _repo.fetch();
-      return data;
+      return await _repo.fetch();
     } catch (_) {
       return null;
     }
@@ -39,5 +38,4 @@ class NavigationViewModel extends AsyncNotifier<AllUrlsBean?> {
   }
 
   String exportJson() => _repo.exportCurrentJson();
-
 }

@@ -44,7 +44,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // Watch theme provider - automatically rebuilds when settings or system brightness changes
     final theme = ref.watch(themeManagerProvider);
 
     return MaterialApp(

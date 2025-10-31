@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hao12345/state/home_setting_view_model.dart';
 import 'package:hao12345/theme/theme_manager.dart';
@@ -8,59 +9,46 @@ import 'package:hao12345/bean/local_setting_config.dart';
 import 'package:hao12345/widgets/ios_modal.dart';
 import 'package:hao12345/utils/logger.dart';
 
-class HomeSettingDialog extends ConsumerStatefulWidget {
+class HomeSettingDialog extends HookConsumerWidget {
   const HomeSettingDialog({super.key});
 
   @override
-  ConsumerState<HomeSettingDialog> createState() => _HomeSettingDialogState();
-}
-
-class _HomeSettingDialogState extends ConsumerState<HomeSettingDialog> {
-  late TextEditingController _iconController;
-  double _tempFontSize = 15.0;
-  String? _tempSearchIcon;
-  Timer? _iconUpdateTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    _iconController = TextEditingController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final config = ref.read(homeSettingViewModelProvider);
-      _tempFontSize = config.fontSize ?? 15.0;
-      _tempSearchIcon = config.searchIcon;
-      _iconController.text = _tempSearchIcon ?? '';
-    });
-  }
-
-  @override
-  void dispose() {
-    _iconUpdateTimer?.cancel();
-    _iconController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(homeSettingViewModelProvider);
     final theme = ref.watch(themeManagerProvider);
+    final homeSettingNotifier = ref.read(homeSettingViewModelProvider.notifier);
 
-    if (_tempFontSize != (config.fontSize ?? 15.0)) {
-      _tempFontSize = config.fontSize ?? 15.0;
-    }
-    if (_tempSearchIcon != config.searchIcon) {
-      _tempSearchIcon = config.searchIcon;
-      _iconController.text = _tempSearchIcon ?? '';
-    }
+    final iconController = useTextEditingController();
+
+    useEffect(() {
+      final modelIcon = config.searchIcon ?? '';
+      if (iconController.text != modelIcon) {
+        iconController.text = modelIcon;
+      }
+      return null;
+    }, [config.searchIcon]);
+
+    final iconText = useValueListenable(iconController).text;
+    useEffect(() {
+      final trimmedValue = iconText.trim();
+      // Avoid sending an update if the value is already what's in the provider
+      if (trimmedValue == (config.searchIcon ?? '')) {
+        return null;
+      }
+
+      final timer = Timer(const Duration(milliseconds: 1500), () {
+        Logger.d('Updating searchIcon to $trimmedValue');
+        homeSettingNotifier.updateSearchIcon(trimmedValue);
+      });
+
+      return () => timer.cancel();
+    }, [iconText]);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '文字大小',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('文字大小', style: TextStyle(fontWeight: FontWeight.bold)),
         Row(
           children: [
             Expanded(
@@ -70,9 +58,7 @@ class _HomeSettingDialogState extends ConsumerState<HomeSettingDialog> {
                 max: 20,
                 divisions: 10,
                 onChanged: (value) {
-                  ref
-                      .read(homeSettingViewModelProvider.notifier)
-                      .updateFontSize(value);
+                  homeSettingNotifier.updateFontSize(value);
                 },
               ),
             ),
@@ -85,39 +71,16 @@ class _HomeSettingDialogState extends ConsumerState<HomeSettingDialog> {
         const SizedBox(height: 12),
 
         // 设置头像
-        const Text(
-          '设置头像',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('设置头像', style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: CupertinoTextField(
-                controller: _iconController,
-                placeholder: '请输入头像地址',
-                maxLines: 2,
-                onChanged: (value) {
-                  setState(() {});
-                  _iconUpdateTimer?.cancel();
-                  final trimmedValue = value.trim();
-                  if (trimmedValue.isNotEmpty) {
-                    _iconUpdateTimer =
-                        Timer(const Duration(milliseconds: 800), () {
-                      final currentValue = _iconController.text.trim();
-                      if (currentValue == trimmedValue &&
-                          trimmedValue.isNotEmpty &&
-                          mounted) {
-                        Logger.d('searchIcon输入头像地址 $trimmedValue');
-                        ref
-                            .read(homeSettingViewModelProvider.notifier)
-                            .updateSearchIcon(trimmedValue);
-                      }
-                    });
-                  }
-                },
-              ),
+                  controller: iconController,
+                  placeholder: '请输入头像地址',
+                  maxLines: 2),
             ),
             const SizedBox(width: 8),
             ClipRRect(
@@ -126,9 +89,9 @@ class _HomeSettingDialogState extends ConsumerState<HomeSettingDialog> {
                 width: 48,
                 height: 48,
                 child: Image.network(
-                  _iconController.text.trim().isEmpty
+                  iconText.trim().isEmpty
                       ? (config.searchIcon ?? LocalSettingConfig.DEF_ICON)
-                      : _iconController.text.trim(),
+                      : iconText.trim(),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stack) =>
                       const Icon(CupertinoIcons.photo),
@@ -140,10 +103,7 @@ class _HomeSettingDialogState extends ConsumerState<HomeSettingDialog> {
         const SizedBox(height: 12),
 
         // 修改主题（自动/亮色/暗色）
-        const Text(
-          '修改主题',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        const Text('修改主题', style: TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
         Builder(builder: (context) {
           final bool? themePref = config.isDarkTheme;

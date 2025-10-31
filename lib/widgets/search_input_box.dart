@@ -8,13 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SearchInputBox extends ConsumerWidget {
   final TextEditingController controller;
-  final bool isSmallScreen;
 
-  const SearchInputBox({
-    super.key,
-    required this.controller,
-    this.isSmallScreen = false,
-  });
+  const SearchInputBox({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,10 +17,6 @@ class SearchInputBox extends ConsumerWidget {
     final settings = ref.watch(homeSettingViewModelProvider);
 
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 5 : 8.0,
-        vertical: 8.0,
-      ),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(10),
