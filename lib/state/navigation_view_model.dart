@@ -40,5 +40,4 @@ class NavigationViewModel extends AsyncNotifier<AllUrlsBean?> {
 
   String exportJson() => _repo.exportCurrentJson();
 
-  Future<bool> verifyRemoteMatchesLocal() => _repo.verifyRemoteMatchesLocal();
 }

@@ -17,6 +17,7 @@ class AllUrlsBean {
       });
     }
   }
+
   int? version;
   String? updatedAt;
   List<Results>? results;
@@ -56,6 +57,7 @@ class Results {
     updatedAt = json['updatedAt'];
     objectId = json['objectId'];
   }
+
   String? name;
   String? url;
   String? description;

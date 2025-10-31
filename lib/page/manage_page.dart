@@ -9,7 +9,6 @@ import 'dart:html' as html;
 import 'package:hao12345/widgets/nav_item_tile.dart';
 import 'package:hao12345/state/manage_page_view_model.dart';
 import 'package:hao12345/widgets/ios_modal.dart';
-// 同步状态展示已移除
 
 class ManagePage extends HookConsumerWidget {
   const ManagePage({super.key});
@@ -113,32 +112,23 @@ class ManagePage extends HookConsumerWidget {
     );
   }
 
-  // 同步状态展示已移除
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(manageViewModelProvider);
     final notifier = ref.read(manageViewModelProvider.notifier);
     final isReorderMode = useState(false);
-    // 远程地址已移除
-
-    useEffect(() {
-      // 远程功能已移除
-      return null;
-    }, []);
 
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('管理'),
-        elevation: 0,
+      appBar: CupertinoNavigationBar(
+        middle: const Text('管理'),
         backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: theme.textTheme.bodyMedium?.color,
       ),
       body: SafeArea(
         child: DefaultTextStyle.merge(
-          style: const TextStyle(
-            color: Colors.black87,
+          style: TextStyle(
+            color: theme.textTheme.bodyMedium?.color ??
+                theme.colorScheme.onSurface,
             decoration: TextDecoration.none,
           ),
           child: isReorderMode.value
@@ -150,7 +140,7 @@ class ManagePage extends HookConsumerWidget {
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: Text(
                           vm.errorMessage!,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(color: theme.colorScheme.error),
                         ),
                       ),
                     const Padding(
@@ -191,7 +181,7 @@ class ManagePage extends HookConsumerWidget {
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: Text(
                           vm.errorMessage!,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(color: theme.colorScheme.error),
                         ),
                       ),
                     const SizedBox(height: 8),
@@ -296,17 +286,17 @@ class ManagePage extends HookConsumerWidget {
           decoration:
               BoxDecoration(color: theme.scaffoldBackgroundColor, boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: theme.dividerColor.withOpacity(0.04),
               blurRadius: 8,
               offset: const Offset(0, -2),
             )
           ]),
           child: Wrap(spacing: 8, runSpacing: 8, children: [
             if (isReorderMode.value) ...[
-              CupertinoButton.filled(
-                onPressed: () {
-                  isReorderMode.value = false;
-                },
+              CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                color: theme.colorScheme.primary,
+                onPressed: () => isReorderMode.value = false,
                 child: const Text('保存并退出排序'),
               ),
               CupertinoButton(
@@ -394,16 +384,18 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final borderColor = selected
-        ? (color ?? Colors.black87)
-        : (color ?? Colors.grey).withOpacity(0.6);
-    final textColor = selected ? (color ?? Colors.black87) : borderColor;
+        ? (color ?? theme.colorScheme.primary)
+        : (color ?? theme.dividerColor).withOpacity(0.6);
+    final textColor =
+        selected ? (color ?? theme.colorScheme.primary) : borderColor;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? (borderColor.withOpacity(0.12)) : Colors.white,
+          color: selected ? (borderColor.withOpacity(0.12)) : theme.cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: borderColor),
         ),

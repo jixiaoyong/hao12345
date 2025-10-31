@@ -27,6 +27,7 @@ class NavItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final host = () {
       final u = Uri.tryParse(item.url ?? '');
       return u?.host ?? '';
@@ -35,9 +36,9 @@ class NavItemTile extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black12),
+        border: Border.all(color: theme.dividerColor),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
@@ -64,8 +65,9 @@ class NavItemTile extends StatelessWidget {
                         item.name ?? '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style: TextStyle(
+                          color: theme.textTheme.bodyLarge?.color ??
+                              theme.colorScheme.onSurface,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
@@ -77,8 +79,10 @@ class NavItemTile extends StatelessWidget {
                             item.description!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 13),
+                            style: TextStyle(
+                                color: theme.textTheme.bodySmall?.color ??
+                                    theme.hintColor,
+                                fontSize: 13),
                           ),
                         )
                     ],
@@ -88,8 +92,9 @@ class NavItemTile extends StatelessWidget {
                     host,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        color: Colors.grey,
+                    style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color ?? theme.hintColor,
                         fontSize: 13,
                         fontStyle: FontStyle.italic),
                   ),
@@ -124,15 +129,15 @@ class NavItemTile extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: (statusColor ?? Colors.grey.withOpacity(0.15))
+                    color: (statusColor ?? theme.hintColor.withOpacity(0.15))
                         .withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: statusColor ?? Colors.grey),
+                    border: Border.all(color: statusColor ?? theme.hintColor),
                   ),
                   child: Text(
                     statusLabel!,
                     style: TextStyle(
-                      color: statusColor ?? Colors.grey,
+                      color: statusColor ?? theme.hintColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -143,12 +148,12 @@ class NavItemTile extends StatelessWidget {
           CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: onEdit,
-            child: const Icon(CupertinoIcons.pencil, color: Colors.black87),
+            child: Icon(CupertinoIcons.pencil, color: theme.iconTheme.color),
           ),
           CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: onDelete,
-            child: const Icon(CupertinoIcons.delete, color: Colors.red),
+            child: Icon(CupertinoIcons.delete, color: theme.colorScheme.error),
           ),
         ],
       ),

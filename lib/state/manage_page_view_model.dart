@@ -337,7 +337,6 @@ class ManageViewModel extends Notifier<ManageState> {
     return encoder.convert(exportBean.toJson());
   }
 
-  Future<bool> verifyRemoteMatchesLocal() => _repo.verifyRemoteMatchesLocal();
 
   bool get hasDirtyDraft =>
       LocalStorage.getItem(SomeKeys.DRAFT_DIRTY) == 'true';

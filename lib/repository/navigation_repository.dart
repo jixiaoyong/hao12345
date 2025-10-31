@@ -39,30 +39,22 @@ class NavigationRepository {
     return updated;
   }
 
-  // 重试逻辑已不需要（取消远程请求）
-
-  // 远程相关功能已移除
-
   String exportCurrentJson() {
     final cache = LocalStorage.getItem(SomeKeys.NAV_CACHE);
     if (cache != null && cache.isNotEmpty) return cache;
-    return jsonEncode({ 'results': [] });
+    return jsonEncode({'results': []});
   }
-
-  Future<AllUrlsBean?> fetchRemoteMeta() async => null;
-
-  Future<bool> verifyRemoteMatchesLocal() async => false;
 
   void _updateLastSyncMeta({String? remoteFetched, String? localEdited}) {
     final metaStr = LocalStorage.getItem(SomeKeys.LAST_SYNC_META);
     Map<String, dynamic> meta = {};
     if (metaStr != null) {
-      try { meta = jsonDecode(metaStr); } catch (_) {}
+      try {
+        meta = jsonDecode(metaStr);
+      } catch (_) {}
     }
     if (remoteFetched != null) meta['remote_last_fetched_at'] = remoteFetched;
     if (localEdited != null) meta['local_last_edited_at'] = localEdited;
     LocalStorage.setItem(SomeKeys.LAST_SYNC_META, jsonEncode(meta));
   }
 }
-
-

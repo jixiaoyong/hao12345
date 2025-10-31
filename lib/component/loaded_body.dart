@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../bean/all_urls_bean.dart';
 
-/// @description: TODO
+/// @description: 导航列表页面
 /// @author: jixiaoyong
 /// @email: jixiaoyong1995@gmail.com
 /// @date: 2023/3/20
-class LoadedBody extends StatefulWidget {
+class LoadedBody extends HookWidget {
   final AllUrlsBean allUrlsBean;
   final bool isSmallWidthScreen;
   final ThemeData themeData;
@@ -22,65 +23,39 @@ class LoadedBody extends StatefulWidget {
   });
 
   @override
-  State<LoadedBody> createState() => _LoadedBodyState();
-}
-
-class _LoadedBodyState extends State<LoadedBody> {
-  // for webview
-  Results? _onHoverItem;
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.allUrlsBean.results?.isNotEmpty == true) {
-      var data = widget.allUrlsBean.results!;
+    final onHoverItem = useState<Results?>(null);
+    if (allUrlsBean.results?.isNotEmpty == true) {
+      var data = allUrlsBean.results!;
       return Wrap(
-        spacing: widget.isSmallWidthScreen ? 5 : 20,
-        runSpacing: widget.isSmallWidthScreen ? 2.0 : 20.0,
+        spacing: isSmallWidthScreen ? 15 : 20,
+        runSpacing: isSmallWidthScreen ? 10.0 : 20.0,
         alignment: WrapAlignment.center,
         clipBehavior: Clip.hardEdge,
         children: data.map((item) {
-          var isSelected = _onHoverItem == item;
-          final isDark = widget.themeData.brightness == Brightness.dark;
-          final Color textColor = isDark
-              ? Colors.black.withOpacity(0.85)
-              : widget.themeData.hintColor;
-          final Color hoverTextColor = isDark
-              ? Colors.black
-              : widget.themeData.highlightColor;
-          final Color bgColor = isDark
-              ? Colors.black.withOpacity(0.5)
-              : (Colors.grey[100]!); // 亮色模式保持之前浅灰
-          final Color hoverBgColor = isDark
-              ? Colors.white.withOpacity(0.12)
-              : widget.themeData.hoverColor;
+          var isSelected = onHoverItem.value == item;
 
           final chip = Chip(
-              label: Text(
-                item.name ?? "",
-                style: TextStyle(
-                    color: isSelected ? hoverTextColor : textColor,
-                    fontSize: widget.fontSize ?? 15,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500),
-              ),
-              backgroundColor: isSelected ? hoverBgColor : bgColor,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: widget.themeData.dividerColor.withOpacity(0.0)),
-                  borderRadius: BorderRadius.circular(20)),
-              elevation: isSelected ? 1 : 0,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            label: Text(
+              item.name ?? "",
+              style: TextStyle(
+                  color: themeData.textTheme.bodyLarge?.color ??
+                      themeData.colorScheme.onSurface,
+                  fontSize: fontSize ?? 15,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500),
+            ),
+            backgroundColor:
+                isSelected ? themeData.hoverColor : themeData.cardColor,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: themeData.cardColor.withOpacity(0.0)),
+                borderRadius: BorderRadius.circular(20)),
+            elevation: isSelected ? 1 : 0,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           );
 
           final withHover = MouseRegion(
-            onHover: (event) {
-              setState(() {
-                _onHoverItem = item;
-              });
-            },
-            onExit: (_) {
-              setState(() {
-                _onHoverItem = null;
-              });
-            },
+            onHover: (event) => onHoverItem.value = item,
+            onExit: (_) => onHoverItem.value = null,
             child: chip,
           );
 
@@ -89,11 +64,7 @@ class _LoadedBodyState extends State<LoadedBody> {
               : withHover;
 
           return GestureDetector(
-            onTap: () {
-              launch(
-                item.url!,
-              );
-            },
+            onTap: () => launchUrl(Uri.parse(item.url!)),
             child: wrapped,
           );
         }).toList(),

@@ -59,7 +59,7 @@ class LocalSettingConfig {
         fontSize: fontSize ?? this.fontSize,
         searchEngine: searchEngine ?? this.searchEngine,
         searchIcon: searchIcon ?? this.searchIcon,
-        isDarkTheme: isDarkTheme ?? this.isDarkTheme,
+        isDarkTheme: isDarkTheme,
       );
 
   Map<String, dynamic> toJson() {
