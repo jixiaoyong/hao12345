@@ -58,7 +58,7 @@ class HomeSettingViewModel extends Notifier<LocalSettingConfig> {
   }
 
   /// Update theme preference
-  /// isDarkTheme: null = 自动跟随系统, false = 亮色, true = 暗色
+  /// isDarkTheme: null = 自动跟随系统，false = 亮色，true = 暗色
   Future<void> updateThemePreference(bool? isDarkTheme) async {
     final updated = state.copyWith(isDarkTheme: isDarkTheme);
     state = updated;

@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hao12345/bean/local_setting_config.dart';
 import 'package:hao12345/state/home_setting_view_model.dart';
 import 'package:hao12345/theme/theme_manager.dart';
-import 'package:hao12345/bean/local_setting_config.dart';
 import 'package:hao12345/widgets/ios_modal.dart';
-import 'package:hao12345/utils/logger.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeSettingDialog extends HookConsumerWidget {
   const HomeSettingDialog({super.key});
@@ -37,7 +36,6 @@ class HomeSettingDialog extends HookConsumerWidget {
       }
 
       final timer = Timer(const Duration(milliseconds: 1500), () {
-        Logger.d('Updating searchIcon to $trimmedValue');
         homeSettingNotifier.updateSearchIcon(trimmedValue);
       });
 
@@ -114,40 +112,10 @@ class HomeSettingDialog extends HookConsumerWidget {
             selectedColor: theme.primaryColor,
             unselectedColor: theme.cardColor,
             pressedColor: theme.primaryColor.withOpacity(0.15),
-            children: const {
-              0: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(CupertinoIcons.circle_lefthalf_fill, size: 16),
-                    SizedBox(height: 2),
-                    Text('自动', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
-              1: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(CupertinoIcons.sun_max_fill, size: 16),
-                    SizedBox(height: 2),
-                    Text('亮色', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
-              2: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(CupertinoIcons.moon_fill, size: 16),
-                    SizedBox(height: 2),
-                    Text('暗色', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
+            children: {
+              0: _themeItem(CupertinoIcons.circle_lefthalf_fill, '自动'),
+              1: _themeItem(CupertinoIcons.sun_max_fill, '亮色'),
+              2: _themeItem(CupertinoIcons.moon_fill, '暗色'),
             },
             groupValue: selectedIndex,
             onValueChanged: (value) {
@@ -155,7 +123,6 @@ class HomeSettingDialog extends HookConsumerWidget {
               if (value == 0) newPref = null; // 跟随系统
               if (value == 1) newPref = false; // 亮色
               if (value == 2) newPref = true; // 暗色
-              Logger.d('updateThemePreference $newPref  value: $value');
               ref
                   .read(homeSettingViewModelProvider.notifier)
                   .updateThemePreference(newPref);
@@ -165,9 +132,22 @@ class HomeSettingDialog extends HookConsumerWidget {
       ],
     );
   }
+
+  Widget _themeItem(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16),
+          const SizedBox(height: 2),
+          Text(text, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
 }
 
-/// Helper function to show the home setting dialog
 Future<void> showHomeSettingDialog(BuildContext context) {
   return showIOSModal(
     context,

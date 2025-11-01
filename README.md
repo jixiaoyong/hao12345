@@ -2,14 +2,13 @@
 
 an online website directory
 
-https://jixiaoyong.github.io/hao12345/
+<https://jixiaoyong.github.io/hao12345/>
 
 ## Getting Started
 
 flutter build web
 
-flutter version： 3.35.7            │ 3.9.2          │ Oct 23, 2025 │
-
+flutter version: 3.35.7            │ 3.9.2          │ Oct 23, 2025 │
 
 ## Manage 使用说明
 
@@ -29,4 +28,3 @@ flutter version： 3.35.7            │ 3.9.2          │ Oct 23, 2025 │
   - “下载 JSON”会下载 `nav.json` 文件。
   - 如需长期/跨设备生效，请将导出的 JSON 覆盖到 `assets/data/default_nav.json` 后提交到仓库并重新构建。
 - **版本与时间戳**: 保存/导出时会自动递增 `version` 并更新 `updatedAt`（UTC ISO8601）。
-

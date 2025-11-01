@@ -16,7 +16,7 @@ import 'home_setting_dialog.dart';
 /// author: jixiaoyong
 /// email: jixiaoyong1995@gmail.com
 /// date: 2022/3/28
-/// description: hao123主页
+/// description: hao123 主页
 class Hao123Page extends HookConsumerWidget {
   const Hao123Page({super.key});
 
@@ -74,7 +74,8 @@ class Hao123Page extends HookConsumerWidget {
                       child: SearchInputBox(controller: textController)),
                   asyncData.when(
                     data: (data) {
-                      if (data == null) {
+                      final navData = data?.results;
+                      if (navData == null || navData.isEmpty) {
                         return const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 24),
@@ -83,7 +84,7 @@ class Hao123Page extends HookConsumerWidget {
                         );
                       }
                       return LoadedBody(
-                        allUrlsBean: data,
+                        navData: navData,
                         isSmallWidthScreen: isSmallWidthScreen,
                         themeData: themeData,
                         fontSize: settings.fontSize ?? 15.0,
